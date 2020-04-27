@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Forked from pass-fzf by Saggi Mizrahi
+# https://github.com/ficoos/pass-fzf
+
+# This pass-fzf fork by Dave Gauer
+# https://github.com/ratfactor/pass-fzf
+
 function path2entry() {
 	local v=$1
 	v=${v#$PREFIX/}
@@ -8,9 +14,8 @@ function path2entry() {
 }
 
 function candidate_selector_fzf() {
-	query=$1
-	candidates=$2
-	echo "$candidates" | fzf -q "$query" --select-1
+	candidates=$1
+	echo "$candidates" | fzf --select-1
 }
 
 function list_entries() {
@@ -19,13 +24,12 @@ function list_entries() {
 	done
 }
 
-query="$@"
+cmds="$@"
 candidates=$(list_entries)
 
-res=$(candidate_selector_fzf "$query" "$candidates")
+res=$(candidate_selector_fzf "$candidates")
 if [ -n "$res" ]; then
-	pass show "$res" | tail -n +2 || exit $?
-	pass show -c "$res"
+	pass $cmds "$res"
 else
 	exit 1
 fi
